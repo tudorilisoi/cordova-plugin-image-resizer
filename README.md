@@ -1,6 +1,48 @@
 # Image Resizer for Cordova #
 By: Protonet GmbH
 
+# This fork
+
+This fork uses the **cordova-plugin-file** folder as the default. 
+
+You'll get a path ending in **"/files/files/yourfilename.jpg"** (note the the "files/files")
+
+You can read the files written by this plugin by requesting an entry like this:
+
+```
+function getFileEntryP(opts) {
+
+    return new Promise((resolve, reject)=> {
+        window.requestFileSystem(window.LocalFileSystem.PERSISTENT, opts.size || 1024 * 1024, function (fs) {
+            console.log('file system open: ' + fs.name);
+            fs.root.getFile(opts.fileName, {create: true, exclusive: false}, function (fileEntry) {
+                resolve(fileEntry)
+            }, reject);
+
+        }, reject);
+    })
+}
+
+function _readFileP(fileEntry, method = 'readAsText') {
+
+    return new Promise((resolve, reject)=> {
+        fileEntry.file(function (file) {
+            var reader = new FileReader();
+
+            reader.onloadend = function () {
+                method === 'readAsText' && console.log("Successful file read: ", this.result);
+                resolve(this.result)
+            };
+
+            reader[method](file);
+
+        }, reject);
+    })
+}
+
+```
+
+
 Authors: Joschka Schulz
 
 ## Adding the Plugin ##
